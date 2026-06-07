@@ -108,13 +108,11 @@ digraph teach_me {
 
 ## Safety
 
-- **Tool posture:** read-only over the code/diff/session being taught; the ONLY writes are the learning artifacts under `docs/raki/learning/` (the `.md` checklist and `.html` map). Never modify the code under study to "demonstrate" — show and run it, don't change it.
-- **Must never:** end the session with unchecked items (the HARD-GATE); accept "makes sense" as mastery; reveal a quiz answer before the learner responds; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
-- **Must always:** diagnose before teaching; keep the `.html` map in sync with the `.md` checklist on every tick; make explanations concrete with real code.
+Read-only over the code/diff/session being taught; the only writes are the learning artifacts under `docs/raki/learning/` (the `.md` checklist and `.html` map). Show and run the code to demonstrate — never modify it. Never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files.
 
 ## Memory
 
-Each session reads [`.memory.md`](.memory.md) when scoping (what this learner has already mastered, which analogies/depths landed, recurring sticking points) and appends what worked at close. Over time the skill teaches *this* learner more efficiently — skipping the known, leaning on explanations that have stuck.
+[`.memory.md`](.memory.md) holds per-learner lessons (what's already mastered, which analogies/depths landed, recurring sticking points) — read it when scoping, append what worked at close, so the skill teaches *this* learner more efficiently over time.
 
 ## Integration
 

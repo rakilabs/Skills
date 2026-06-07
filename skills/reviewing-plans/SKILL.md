@@ -102,13 +102,11 @@ Pre-check the plan for these on load. Any HARD-GATE present escalates effort and
 
 ## Safety
 
-- **Tool posture:** read-only over the plan, spec, and codebase; the ONLY write is the review file under `docs/raki/reviews/`. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit or execute.
-- **Must never:** execute any task in the plan; modify source code; approve with an unresolved HARD-GATE; invent task references; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
-- **Must always:** read both plan and spec before finding; cite the specific task/section per finding; verify HARD-GATE findings; fail closed (when in doubt, flag — the verifier can downgrade).
+Read-only over the plan, spec, and codebase; the only write is the review under `docs/raki/reviews/`. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit or execute. Never execute a plan task or modify source, and never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files. Fail closed: when unsure, flag — the verifier downgrades.
 
 ## Memory
 
-Each invocation reads [`.memory.md`](.memory.md) in Phase 0 (known false positives, project conventions, recurring plan gaps) and appends durable lessons in Phase 6. This keeps the skill from re-learning the same team's planning quirks every session.
+[`.memory.md`](.memory.md) holds project-specific lessons (known false positives, conventions, recurring plan gaps) — read it in Phase 0, append durable lessons in Phase 6, so the skill stops re-learning the same quirks.
 
 ## Integration
 

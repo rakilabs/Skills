@@ -98,13 +98,11 @@ digraph spec_walkthrough {
 
 ## Safety
 
-- **Tool posture:** read-only over the spec and the code it touches; the ONLY writes are the walkthrough artifacts under `docs/raki/learning/` (the `-spec.md` checklist and `-spec.html` map). Use `subagent_type=Explore` to read code — never modify it to illustrate a point.
-- **Must never:** quiz before the walkthrough is complete (the HARD-GATE); end at recall rather than ownership; reveal a check's answer before the developer responds; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
-- **Must always:** read the code before walking through it; keep the `.html` map in sync with the `.md` checklist; tie every decision back to the problem, the code, and the system.
+Read-only over the spec and the code it touches; the only writes are the walkthrough artifacts under `docs/raki/learning/` (the `-spec.md` checklist and `-spec.html` map). Use `subagent_type=Explore` to read code — never modify it to illustrate a point. Never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files.
 
 ## Memory
 
-Each session reads [`.memory.md`](.memory.md) when scoping (which parts of this system the developer already owns, design areas that recur, decisions whose rationale keeps getting asked) and appends what surfaced at close. Over time the walkthroughs skip the already-owned and dwell on the genuinely new.
+[`.memory.md`](.memory.md) holds per-developer/per-system lessons (what the developer already owns, recurring design areas, rationale that keeps getting asked) — read it when scoping, append what surfaced at close, so walkthroughs skip the already-owned and dwell on the new.
 
 ## Integration
 

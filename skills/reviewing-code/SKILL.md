@@ -97,13 +97,11 @@ digraph reviewing_code {
 
 ## Safety
 
-- **Tool posture:** read-only over the diff and codebase; the ONLY writes are the review file under `docs/raki/reviews/` and — *only when explicitly asked* — the optional cleanup-fix application step. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit.
-- **Must never:** auto-apply correctness fixes (the author must own those); apply a cleanup fix that changes behavior or reaches well outside the diff; ship a finding as CONFIRMED without verifying it; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
-- **Must always:** establish the diff scope in Phase 0; verify before asserting; rank correctness above cleanup; note any skipped cleanup rather than silently dropping it.
+Read-only over the diff and codebase; the only writes are the review under `docs/raki/reviews/` and — *only when explicitly asked* — the optional cleanup-fix step. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit. Never auto-apply correctness fixes (the author owns those), and never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files.
 
 ## Memory
 
-Each run reads [`.memory.md`](.memory.md) in Phase 0 (known false positives, project conventions like a custom auth pattern that is *not* a vulnerability, recurring bug classes) and appends durable lessons after the verdict. This stops the skill from re-flagging the same intentional patterns every review.
+[`.memory.md`](.memory.md) holds project-specific lessons (known false positives like a custom auth pattern that is *not* a vulnerability, conventions, recurring bug classes) — read it in Phase 0, append after the verdict, so the skill stops re-flagging intentional patterns.
 
 ## Integration
 

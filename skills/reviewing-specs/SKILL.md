@@ -103,13 +103,11 @@ These are automatic CRITICAL findings — no need to debate severity:
 
 ## Safety
 
-- **Tool posture:** read-only over the spec and codebase; the ONLY write is the review file under `docs/raki/reviews/`. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit.
-- **Must never:** modify the spec under review; auto-approve without completing the phases for the chosen effort; skip verification on a CRITICAL finding; invent quotes or cite text that isn't in the spec; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
-- **Must always:** quote spec text verbatim; rank required fixes by severity; provide a concrete fix per finding; fail closed (when in doubt, flag — the verifier can downgrade).
+Read-only over the spec and codebase; the only write is the review under `docs/raki/reviews/`. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit. Never modify the spec under review, and never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files. Fail closed: when unsure, flag — the verifier downgrades.
 
 ## Memory
 
-Each invocation reads [`.memory.md`](.memory.md) in Phase 0 (known false positives, project conventions, recurring spec gaps) and appends durable lessons in Phase 6. This keeps the skill from re-learning the same project's quirks every session.
+[`.memory.md`](.memory.md) holds project-specific lessons (known false positives, conventions, recurring spec gaps) — read it in Phase 0, append durable lessons in Phase 6, so the skill stops re-learning the same quirks.
 
 ## Integration
 
