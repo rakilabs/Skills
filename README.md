@@ -34,6 +34,8 @@ Most review frameworks are too polite. They hedge, qualify, and soften feedback 
 2. **STEELMAN** — Build the strongest possible case FOR it. Genuine, not sarcastic.
 3. **VERDICT** — Honest go/no-go with actionable fixes.
 
+All three review skills run this as a **multi-angle fan-out**: specialist finder subagents each get their own context window and attack one dimension, then an adversarial **verifier** steel-mans each candidate (CONFIRMED / PLAUSIBLE / REFUTED) to kill false positives before the verdict. LLM reviewers have a known leniency bias when a single agent both writes and judges; independent scoped finders plus a refute-capable verifier are the structural fix. An **effort dial** (`low` / `medium` / `high`) scales how many angles run — a two-line change doesn't need seven reviewers. Each skill reads a `.memory.md` of project-specific lessons on load and appends to it on close, so it stops re-flagging the same intentional patterns.
+
 ### Learn: mastery is demonstrated, not asserted
 
 Most "explain this" prompts dump everything at once and accept "got it" as proof. Raki's learning skills don't:
@@ -111,21 +113,23 @@ mkdir -p ~/.codex/skills/raki
 cp -r skills/reviewing-specs skills/reviewing-plans skills/reviewing-code skills/teach-me skills/spec-walkthrough ~/.codex/skills/raki/
 ```
 
-### Custom Agents (for `reviewing-code`)
+### Custom Agents (for the review skills)
 
-`reviewing-code` dispatches 4 bundled subagents (`skills/reviewing-code/agents/`). They travel with the skill, but most hosts only auto-discover agents from a dedicated agents directory — copy them there so `subagent_type` resolves by name:
+All three review skills fan out to bundled subagents: `reviewing-specs` (7), `reviewing-plans` (6), and `reviewing-code` (4), each under the skill's `agents/` directory. They travel with the skill, but most hosts only auto-discover agents from a dedicated agents directory — copy them there so `subagent_type` resolves by name:
 
 ```bash
-# Point AGENTS_DIR at your host's agents directory, then copy:
+# Point AGENTS_DIR at your host's agents directory, then copy every skill's agents:
 #   Claude Code → ~/.claude/agents   (or .claude/agents in a repo)
 #   Kimi CLI    → ~/.kimi/agents
 #   Codex       → ~/.codex/agents
 AGENTS_DIR=~/.claude/agents   # change per host
 mkdir -p "$AGENTS_DIR"
-cp skills/reviewing-code/agents/*.md "$AGENTS_DIR/"
+cp skills/reviewing-specs/agents/*.md "$AGENTS_DIR/"
+cp skills/reviewing-plans/agents/*.md "$AGENTS_DIR/"
+cp skills/reviewing-code/agents/*.md  "$AGENTS_DIR/"
 ```
 
-If a host can't register named agents, the skill falls back to dispatching generic subagents using each agent file's body as the prompt — no registration required.
+If a host can't register named agents, the skills fall back to dispatching generic subagents using each agent file's body as the prompt — no registration required. The finder/verifier agents declare `tools: Read, Grep, Glob`, so they are read-only by construction.
 
 ### Cross-Session Use
 
@@ -136,26 +140,46 @@ These skills are designed for cross-session use:
 
 ## Directory Structure
 
+Every skill is a lean orchestrator `SKILL.md` plus, where it fans out, an `agents/` directory of scoped read-only subagents. Each skill also carries a `.memory.md` for project-specific lessons that persist across sessions.
+
 ```
 skills/
   reviewing-specs/
-    SKILL.md                    # Skill definition
-    spec-reviewer-prompt.md     # Subagent prompt template
+    SKILL.md                    # Skill definition (lean orchestrator + effort dial)
+    .memory.md                  # Accumulated lessons (read on load, appended on close)
+    agents/                     # 7 custom subagents the skill dispatches
+      product-requirements-reviewer.md  # finder: stories, acceptance, metrics
+      architecture-reviewer.md          # finder: components, boundaries, contracts
+      edge-case-reviewer.md             # finder: boundaries, failures, concurrency
+      scope-yagni-reviewer.md           # finder: scope creep, gold-plating
+      security-privacy-reviewer.md      # finder: authn/authz, PII, secrets
+      testability-reviewer.md           # finder: test strategy, observability
+      spec-finding-verifier.md          # verifier: CONFIRMED/PLAUSIBLE/REFUTED
   reviewing-plans/
-    SKILL.md                    # Skill definition
-    plan-reviewer-prompt.md     # Subagent prompt template
+    SKILL.md                    # Skill definition (lean orchestrator + effort dial)
+    .memory.md
+    agents/                     # 6 custom subagents the skill dispatches
+      dependency-order-reviewer.md      # finder: circular deps, unsafe ordering
+      task-sizing-reviewer.md           # finder: oversized/vague tasks
+      test-plan-reviewer.md             # finder: missing tests/verification
+      rollback-migration-reviewer.md    # finder: rollback + migration safety
+      integration-risk-reviewer.md      # finder: cross-system blast radius
+      plan-verifier.md                  # verifier: CONFIRMED/PLAUSIBLE/REFUTED
   reviewing-code/
     SKILL.md                    # Skill definition
+    .memory.md
     agents/                     # 4 custom subagents the skill dispatches
       correctness-reviewer.md   #   finder: line-by-line, removed-behavior, pitfalls
       integration-reviewer.md   #   finder: call sites, wrapper/proxy routing
       cleanup-reviewer.md       #   finder: reuse/simplify/efficiency/altitude (/simplify)
       finding-verifier.md       #   verifier: CONFIRMED/PLAUSIBLE/REFUTED
   teach-me/
-    SKILL.md                    # Skill definition
+    SKILL.md                    # Skill definition (+ effort dial)
+    .memory.md                  # Per-learner lessons (what landed, what's mastered)
     HTML-REPORT.md              # HTML learning-map scaffold + diagram patterns
   spec-walkthrough/
-    SKILL.md                    # Skill definition
+    SKILL.md                    # Skill definition (+ effort dial)
+    .memory.md                  # Per-developer / per-system lessons
     HTML-REPORT.md              # HTML learning-map scaffold + diagram patterns
 ```
 

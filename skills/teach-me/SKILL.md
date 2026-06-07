@@ -25,6 +25,18 @@ Build the checklist around these three pillars:
 
 For every item, drive at **why** (then drill into deeper whys), plus **what** and **how**. Understanding the problem deeply is imperative — do not let it skip ahead to the solution before the problem lands.
 
+## Effort dial
+
+Per-explanation depth is the ELI5 / ELI14 / ELI-intern knob (the learner pulls it). This dial controls the *breadth and rigor of the loop* (default **medium**):
+
+| Effort | Checklist granularity | Verification | Use when |
+|--------|----------------------|--------------|----------|
+| low    | Key concepts only (coarse items) | One quiz per item | A quick refresher, or the learner already knows most of it |
+| medium | Full three-pillar checklist | Quiz per stage, "why" questions | Standard onboarding to a change/session (default) |
+| high   | Fine-grained items + prerequisites | Harder "why/extend" questions **and** one applied challenge (modify or extend the code) before close | Deep mastery of unfamiliar or load-bearing code |
+
+The HARD-GATE holds at every level — the session never ends with unchecked items. Higher effort raises the *bar* for each tick, not whether the gate applies.
+
 ## Checklist
 
 1. **Scope the material** — identify the change/session/code to teach. Read it fully (diff, files, PR, conversation).
@@ -93,6 +105,16 @@ digraph teach_me {
 | HTML drifts from the .md checklist | The two artifacts must agree; re-emit on every tick |
 | Adding JS state/interactivity to the HTML | It's regenerate-on-tick and static; only scripts are the Tailwind + Mermaid CDNs |
 | Prose-heavy diagrams | If a diagram needs a paragraph to read, redraw it |
+
+## Safety
+
+- **Tool posture:** read-only over the code/diff/session being taught; the ONLY writes are the learning artifacts under `docs/raki/learning/` (the `.md` checklist and `.html` map). Never modify the code under study to "demonstrate" — show and run it, don't change it.
+- **Must never:** end the session with unchecked items (the HARD-GATE); accept "makes sense" as mastery; reveal a quiz answer before the learner responds; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
+- **Must always:** diagnose before teaching; keep the `.html` map in sync with the `.md` checklist on every tick; make explanations concrete with real code.
+
+## Memory
+
+Each session reads [`.memory.md`](.memory.md) when scoping (what this learner has already mastered, which analogies/depths landed, recurring sticking points) and appends what worked at close. Over time the skill teaches *this* learner more efficiently — skipping the known, leaning on explanations that have stuck.
 
 ## Integration
 

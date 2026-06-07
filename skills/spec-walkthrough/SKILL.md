@@ -28,6 +28,18 @@ Connect every point back to the problem, the codebase, and the system as a whole
 4. **Codebase & system fit** — how it fits the broader architecture; which existing components are involved; what changes are introduced; how those changes interact with current systems.
 5. **Risks & operations** — edge cases, failure modes, operational concerns; expected production behavior; what future maintainers must know to change it safely.
 
+## Effort dial
+
+Depth per point is the ELI5 / ELI14 / ELI-intern knob (the developer pulls it). This dial controls *how much of the design surface* the walkthrough covers and how demanding the verification is (default **medium**):
+
+| Effort | Walkthrough scope | Verification | Use when |
+|--------|-------------------|--------------|----------|
+| low    | Core design: end-to-end behavior + key decisions | Comprehension checks on the main path | A small/contained design, or a quick orientation |
+| medium | All five dimensions, in full | Checks across every dimension, including tradeoffs and ops | Standard design ownership transfer (default) |
+| high   | Five dimensions + deep alternatives/tradeoff analysis | The above **and** a design-extension exercise: the developer proposes a change/extension and defends it | Load-bearing or unfamiliar design they will own and evolve |
+
+The HARD-GATE holds at every level — walkthrough first in full, verification second, and the session ends only at ownership-level understanding. Higher effort widens the surface and raises the bar; it never reorders the two phases.
+
 ## Checklist
 
 1. **Scope & map** — read the spec/design/plan in full. Use the Agent tool with `subagent_type=Explore` to walk the code it touches: components involved, where changes land, how they interact with current systems. You cannot walk someone through code you haven't read.
@@ -83,6 +95,16 @@ digraph spec_walkthrough {
 | No risk / operational / production coverage | An incomplete walkthrough; maintainers need this most |
 | Treating it like `teach-me` | Different job: subject-learning vs. design-ownership |
 | Revealing answers before they respond | Destroys the verification signal |
+
+## Safety
+
+- **Tool posture:** read-only over the spec and the code it touches; the ONLY writes are the walkthrough artifacts under `docs/raki/learning/` (the `-spec.md` checklist and `-spec.html` map). Use `subagent_type=Explore` to read code — never modify it to illustrate a point.
+- **Must never:** quiz before the walkthrough is complete (the HARD-GATE); end at recall rather than ownership; reveal a check's answer before the developer responds; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
+- **Must always:** read the code before walking through it; keep the `.html` map in sync with the `.md` checklist; tie every decision back to the problem, the code, and the system.
+
+## Memory
+
+Each session reads [`.memory.md`](.memory.md) when scoping (which parts of this system the developer already owns, design areas that recur, decisions whose rationale keeps getting asked) and appends what surfaced at close. Over time the walkthroughs skip the already-owned and dwell on the genuinely new.
 
 ## Integration
 

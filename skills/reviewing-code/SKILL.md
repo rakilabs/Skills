@@ -95,6 +95,16 @@ digraph reviewing_code {
 | Padding the sweep | Phase 3 is gaps-only; invented findings erode trust |
 | No diff scope established | Phase 0 skipped; review is unanchored |
 
+## Safety
+
+- **Tool posture:** read-only over the diff and codebase; the ONLY writes are the review file under `docs/raki/reviews/` and — *only when explicitly asked* — the optional cleanup-fix application step. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit.
+- **Must never:** auto-apply correctness fixes (the author must own those); apply a cleanup fix that changes behavior or reaches well outside the diff; ship a finding as CONFIRMED without verifying it; modify `CLAUDE.md`, `AGENTS.md`, or memory files of other tools.
+- **Must always:** establish the diff scope in Phase 0; verify before asserting; rank correctness above cleanup; note any skipped cleanup rather than silently dropping it.
+
+## Memory
+
+Each run reads [`.memory.md`](.memory.md) in Phase 0 (known false positives, project conventions like a custom auth pattern that is *not* a vulnerability, recurring bug classes) and appends durable lessons after the verdict. This stops the skill from re-flagging the same intentional patterns every review.
+
 ## Integration
 
 - **Third review skill** alongside `reviewing-specs` (validates the spec) and `reviewing-plans` (validates the plan). This one validates the *code*.
