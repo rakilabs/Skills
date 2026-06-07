@@ -1,10 +1,10 @@
-# HTML Learning Map Format (spec-walkthrough)
+# HTML Walkthrough Map Format (spec-walkthrough)
 
-The learning map is a single self-contained HTML file written next to the markdown checklist at `docs/raki/learning/<date>-<topic>-spec.html`. Tailwind and Mermaid both come from CDNs — no build step. It is a **visual companion** the developer keeps open while being taught the spec: it maps the spec onto the code and shows live mastery progress.
+A single self-contained HTML file written next to the comprehension checklist at `docs/raki/learning/<date>-<topic>-spec.html`. Tailwind and Mermaid via CDN — no build step. It is the **map a senior engineer sketches while walking a junior through the design**: it lays out the whole design across five dimensions and tracks comprehension.
 
-**Regenerate-on-tick.** The file is static — there is no live state. Whenever a checklist item is mastered, rewrite the whole file so the progress reflects reality. The only scripts allowed are the Tailwind CDN and the Mermaid ESM import. No app code, no interactivity beyond Mermaid's own rendering.
+**Two phases, mirrored in the file.** During the WALKTHROUGH the map is reference material you talk over — the checklist stays unchecked. Only in the VERIFY phase do checklist items get ticked. **Regenerate-on-tick:** the file is static; rewrite it when a comprehension item is confirmed. The only scripts are the Tailwind CDN and the Mermaid ESM import.
 
-Mermaid handles graph-shaped diagrams reliably (requirement trees, spec→code mappings, dependency graphs); hand-built divs and inline SVG handle the more editorial visuals (gap/decision boards). Mix the two — don't lean on Mermaid for everything, it starts to look generic.
+Mermaid handles graph-shaped diagrams (decision trees, spec→code maps, sequences); hand-built divs and inline SVG handle editorial visuals (alternatives tables, risk boards). Mix the two.
 
 ## Scaffold
 
@@ -20,18 +20,21 @@ Mermaid handles graph-shaped diagrams reliably (requirement trees, spec→code m
       mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose" });
     </script>
     <style>
-      .seam   { stroke-dasharray: 4 4; }
-      .gap    { stroke: #d97706; stroke-width: 2px; }
-      .done   { text-decoration: line-through; opacity: 0.55; }
+      .chosen   { stroke: #059669; stroke-width: 3px; }
+      .rejected { stroke-dasharray: 4 4; opacity: 0.6; }
+      .risk     { stroke: #d97706; stroke-width: 2px; }
+      .done     { text-decoration: line-through; opacity: 0.55; }
     </style>
   </head>
   <body class="bg-stone-50 text-slate-900 font-sans">
     <main class="max-w-5xl mx-auto px-6 py-12 space-y-12">
       <header>...</header>
-      <section id="progress">...</section>     <!-- mastery checklist -->
-      <section id="intent">...</section>        <!-- pillar 1 -->
-      <section id="codebase-map">...</section>  <!-- pillar 2 -->
-      <section id="gaps">...</section>          <!-- pillar 3 -->
+      <section id="comprehension">...</section>   <!-- checklist, ticked in VERIFY -->
+      <section id="problem">...</section>          <!-- 1. problem & motivation -->
+      <section id="rationale">...</section>        <!-- 2. solution & rationale -->
+      <section id="end-to-end">...</section>       <!-- 3. how it works end-to-end -->
+      <section id="codebase-fit">...</section>     <!-- 4. codebase & system fit -->
+      <section id="risks-ops">...</section>        <!-- 5. risks & operations -->
     </main>
   </body>
 </html>
@@ -39,76 +42,74 @@ Mermaid handles graph-shaped diagrams reliably (requirement trees, spec→code m
 
 ## Header
 
-Topic, date, the spec's source (PRD/ticket link or filename), and a compact progress meter — `N / M mastered` plus a thin bar. No introduction paragraph.
+Topic, date, the source (spec/design-doc/plan link or filename), and a compact comprehension meter — `N / M confirmed` plus a thin bar. No intro paragraph.
 
-## Progress section (the mastery checklist)
+## Comprehension section
 
-The checklist rendered visually, grouped by the three pillars. Each item is a row:
+The checklist rendered visually, grouped by the five dimensions. Each row: a state marker (empty circle → emerald check when confirmed in VERIFY, apply `.done`), the dimension item, and an optional `verified ✓` tag. **Unchecked throughout the walkthrough; ticked only during verification.**
 
-- A state marker — empty circle (unmastered) or filled emerald check (mastered, apply `.done`).
-- The concept, one short line.
-- Optional: a tiny quiz tag (`quizzed ✓`) once verified.
+## The five dimensions
 
-This section is the visual twin of the `.md` checklist — they must always agree. Re-emit on every tick.
+Each is one `<section>`. Diagrams carry the weight; prose is sparse and uses the design's own vocabulary (and `CONTEXT.md` terms if the project has them).
 
-## The three pillars
+### 1. Problem & motivation
 
-Each pillar is one `<section>`. Diagrams carry the weight; prose is sparse and uses the spec's own vocabulary (and `CONTEXT.md` terms if the project has them).
+A short framing plus a **context graph** (Mermaid `flowchart`): the problem at the root, the forces/constraints that made it a problem, and what triggered the work now.
 
-### 1. Intent — what the spec asks & why
+### 2. Solution & rationale
 
-A **requirements tree** (Mermaid `flowchart` / `mindmap`): the spec's goal at the root, branching into its requirements and the constraints/acceptance criteria under each. This makes scope and the "why" legible at a glance. Tag any acceptance criterion that's testable.
+The centrepiece of the "why." An **alternatives view**: the chosen approach beside the rejected ones, each with the one-line reason it lost. Mermaid decision tree with the chosen edge `.chosen` and rejected branches `.rejected`, or a hand-built two-column "considered / chosen" table. Call out the load-bearing assumptions and the key tradeoffs (what each buys and costs).
 
 ```html
-<div class="rounded-lg border border-slate-200 bg-white p-4">
-  <pre class="mermaid">
-    flowchart TD
-      G[Goal: users can reset password] --> R1[Req: email reset link]
-      G --> R2[Req: link expires in 1h]
-      G --> R3[Req: rate-limit requests]
-      R2 --> C1[Acceptance: expired link → 410]
-      classDef gap stroke:#d97706,stroke-width:2px;
-  </pre>
-</div>
+<pre class="mermaid">
+  flowchart TD
+    P[Goal] --> A[Option A: ...]:::rejected
+    P --> B[Option B: chosen]:::chosen
+    P --> C[Option C: ...]:::rejected
+    classDef chosen stroke:#059669,stroke-width:3px;
+    classDef rejected stroke-dasharray:4 4,opacity:0.6;
+</pre>
 ```
 
-### 2. Codebase map — where the spec lands
+### 3. How it works end-to-end
 
-The centrepiece. A **Mermaid graph** mapping spec requirements onto the real code: requirement nodes on one side, the modules/files/seams they touch on the other, edges connecting them. Colour edges that touch existing behavior (a change, not an addition) so the blast radius is obvious. This is the pillar the `Explore` pass feeds — name real files (`font-mono`).
+A **Mermaid sequence or flow diagram** of the design's behavior start to finish — the moving parts and how a request/operation flows through them. This is the "how," made concrete.
+
+### 4. Codebase & system fit
+
+A **Mermaid graph** mapping the design onto the real code: components/modules involved on one side, what the design adds/changes wired to them, edges showing interaction with current systems. Name real files (`font-mono`). Colour changed-existing-behavior red so the blast radius is obvious.
 
 ```html
 <pre class="mermaid">
   flowchart LR
-    R1[email reset link] --> M1["auth/mailer.ts"]
-    R3[rate-limit] --> M2["middleware/rateLimit.ts (exists)"]
-    R2[1h expiry] --> M3["auth/tokens.ts (change)"]
+    N1[new: token service] --> M1["auth/tokens.ts (change)"]:::change
+    N1 --> M2["auth/mailer.ts (exists)"]
     classDef change stroke:#dc2626,stroke-width:2px;
-    class M3 change
 </pre>
 ```
 
-### 3. Gaps — open decisions & edge cases
+### 5. Risks & operations
 
-A **hand-built gap board**: cards in a grid, one per ambiguity / open decision / edge case the spec leaves unresolved. Each card: the question, why it matters, and where it bites in the code. Amber-tint (`.gap`) the ones that block implementation. These are surfaced for hand-off, not resolved here — make that visible (e.g. a "→ grill-me" tag).
+A **hand-built risk board**: cards in a grid, one per risk / edge case / failure mode / operational concern. Each card: what could go wrong, the expected production behavior, and what a future maintainer must know. Amber-tint (`.risk`) the ones that need a mitigation decision; tag any unresolved design gap `→ grill-me`.
 
 ## Diagram patterns
 
 Pick what fits; mix them; don't make every diagram look the same.
 
-- **Requirements tree** (Mermaid `flowchart`/`mindmap`) — goal → requirements → acceptance criteria. Pillar 1.
-- **Spec→code map** (Mermaid `graph`) — requirements wired to the modules they touch, changes highlighted. Pillar 2, the workhorse.
-- **Gap board** (hand-built div grid) — open decisions and edge cases as cards. Pillar 3.
-- **Sequence diagram** (Mermaid) — when a requirement is about ordering/flow ("link issued → clicked → validated → expired").
-- **Cross-section** (stacked `h-12 border-l-4` bands) — for a request path the spec changes layer by layer.
+- **Context graph** (Mermaid) — problem and the forces behind it. Dimension 1.
+- **Alternatives tree / table** (Mermaid decision tree or hand-built columns) — chosen vs. rejected with reasons. Dimension 2, the "why" workhorse.
+- **Sequence / flow** (Mermaid) — end-to-end behavior. Dimension 3.
+- **Spec→code map** (Mermaid graph) — design wired to real components, changes highlighted. Dimension 4.
+- **Risk board** (hand-built card grid) — risks, edge cases, ops concerns. Dimension 5.
 
 ## Style guidance
 
 - Lean editorial, not corporate-dashboard. Generous whitespace. `font-serif` headings pair well with stone/slate.
-- Colour sparingly: one accent (emerald or indigo), red for code that changes, amber for gaps/open decisions.
-- Keep diagrams ~320px tall so they sit comfortably without scrolling.
-- Module/file labels: `font-mono text-sm`; schematic labels inside diagrams: `text-xs uppercase tracking-wider`.
+- Colour sparingly: one accent (emerald or indigo), red for code that changes, amber for risks/open decisions, dashed/faded for rejected alternatives.
+- Keep diagrams ~320px tall.
+- Module/file labels `font-mono text-sm`; schematic labels inside diagrams `text-xs uppercase tracking-wider`.
 - If a diagram needs a paragraph to be understood, redraw the diagram.
 
 ## Tone
 
-Plain English, concise. Use the spec's own terms and the project's `CONTEXT.md` vocabulary — don't invent synonyms. Every diagram should answer a *why*, *what*, or *where-in-the-code* the developer needs. No throat-clearing. If a sentence could be a bullet, make it a bullet. If a bullet could be cut, cut it.
+Plain English, concise — the voice of the engineer who designed it. Use the design's own terms and the project's `CONTEXT.md` vocabulary. Every diagram should answer a *why*, *how*, *where-in-the-code*, or *what-could-go-wrong* the developer needs to own the design. No throat-clearing. If a sentence could be a bullet, make it a bullet.

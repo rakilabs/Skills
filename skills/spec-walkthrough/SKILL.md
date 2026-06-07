@@ -1,41 +1,41 @@
 ---
 name: spec-walkthrough
-description: "Teach a developer a spec by reading the spec AND the codebase it touches, then walking them through it until they have demonstrably mastered what they're about to build. The spec-flavored sibling of teach-me, used BEFORE implementation. Use when the user says 'walk me through this spec', 'help me understand this spec before I build it', 'onboard me to this spec', or hands over a spec/PRD/ticket they need to internalize against the existing code."
+description: "Walk a developer through a spec / design doc / architecture proposal / implementation plan as a senior engineer guiding a junior. FIRST a complete step-by-step walkthrough — problem, why it exists, why this solution over alternatives, architectural decisions, tradeoffs, assumptions, end-to-end behavior, codebase fit, risks, and production/operational concerns — THEN comprehension checks. Reads the spec AND the code it touches. Use when the user says 'walk me through this spec/design/plan', 'explain this architecture/proposal', 'help me understand this before I build or review it', or hands over a design doc they need to own. Verification comes only AFTER the full walkthrough — never interleaved."
 ---
 
 # spec-walkthrough
 
 ## Overview
 
-A wise, effective teaching loop for a spec. The goal is that the developer **deeply understands** the spec before writing code — high level (intent, why it exists) and low level (requirements, how it lands in the existing code, the edge cases). Read the spec AND the codebase it touches, then teach incrementally, one stage at a time, confirming mastery of each stage before moving on. Never dump everything at the end.
+You are a **senior engineer walking a junior through a design** — a spec, design doc, architecture proposal, or implementation plan. This is not subject-teaching; it is design transfer. The goal is that the developer can **think about, discuss, review, maintain, and extend** this design with the understanding of someone who built it.
 
-Two artifacts back the session: a markdown checklist (the source of truth for the gate) and a self-contained **HTML learning map** — a visual companion showing the spec mapped onto the code (requirements, spec → code, open gaps) alongside live mastery progress.
+The session has two phases, in strict order:
+
+1. **WALKTHROUGH** — guide through the *entire* design, step by step: context, reasoning, alternatives weighed, tradeoffs, and constant connection to the real codebase. This is exposition, not testing.
+2. **VERIFY** — only after the walkthrough is complete, switch into comprehension checks across every dimension.
 
 <HARD-GATE>
-The session does NOT end until the developer has demonstrated mastery of every item on the checklist. "Demonstrated" means they restated it correctly or answered a quiz correctly — not that you explained it and they said "got it." Do not advance to the next stage until the current stage is mastered. Do not declare the session complete with unchecked items.
+Do NOT quiz, test, or check comprehension until the ENTIRE walkthrough is complete. Walkthrough first, in full; verification second. Never interleave them — interleaving turns this back into teach-me, which is the wrong skill. Then: the session does NOT end until verification confirms the developer can discuss, review, maintain, and extend the design — not merely recall facts about it.
 </HARD-GATE>
 
-## What they must understand
+## What the walkthrough covers
 
-Build the checklist around these three pillars:
+Connect every point back to the problem, the codebase, and the system as a whole. Cover, in order:
 
-1. **Intent** — what the spec asks for and why; its requirements, constraints, and acceptance criteria.
-2. **Codebase map** — how the spec lands in the existing code: where it'll be implemented, which modules/seams it touches, what existing behavior it changes or depends on.
-3. **Gaps** — the ambiguities, open decisions, and edge cases that must be resolved before (or while) building. The learner must understand *that these exist and why they matter* — not necessarily resolve them here.
-
-For every item, drive at **why** (then drill into deeper whys), plus **what** and **how**. Understanding the intent deeply is imperative — do not let it jump to implementation before the intent lands.
+1. **Problem & motivation** — what the design accomplishes; why this problem exists; the history/context that led here.
+2. **Solution & rationale** — why this solution; which alternatives were considered and rejected, and why; the architectural decisions; the key tradeoffs, constraints, and load-bearing assumptions.
+3. **How it works end-to-end** — the design's behavior start to finish; the moving parts and how they interact.
+4. **Codebase & system fit** — how it fits the broader architecture; which existing components are involved; what changes are introduced; how those changes interact with current systems.
+5. **Risks & operations** — edge cases, failure modes, operational concerns; expected production behavior; what future maintainers must know to change it safely.
 
 ## Checklist
 
-1. **Scope the spec** — read the spec/PRD/ticket in full. Note its stated goals, requirements, constraints, and success criteria.
-2. **Map onto the codebase** — use the Agent tool with `subagent_type=Explore` to walk the code the spec touches: where the work lands, which modules/seams are involved, what existing behavior is affected. This pass produces the Codebase-map pillar and surfaces candidate gaps.
-3. **Build the checklist** — resolve today's date (`date +%F`) and write the doc at `docs/raki/learning/<date>-<topic>-spec.md` with an unchecked item per concept across the three pillars. This is the source of truth for the gate.
-4. **Render the learning map** — write the self-contained HTML companion to `docs/raki/learning/<date>-<topic>-spec.html` (Tailwind + Mermaid via CDN, no build step). Visualize the three pillars and embed the mastery checklist. Open it (`open <path>` on macOS, `xdg-open` on Linux, `start` on Windows) and tell the developer the absolute path. See [HTML-REPORT.md](HTML-REPORT.md).
-5. **Diagnose first** — before teaching anything, ask the developer (in plain chat) to restate their current understanding of the spec. Find the gaps from there. Don't re-explain what they already know.
-6. **Teach one stage** — explain the smallest next gap. Adapt depth on request: ELI5, ELI14, or ELI-intern. Show the real code the spec touches, or use the debugger, when it makes the concept concrete.
-7. **Verify the stage** — quiz them. For multiple-choice, use `AskUserQuestion`; for open-ended "explain why…" questions, ask in plain chat. Vary the position of the correct answer. Do NOT reveal the answer until after they respond. Tick the checklist item only on a correct answer.
-8. **Loop** — repeat steps 6–7 per stage until every checklist item is checked. On each mastery, update BOTH the `.md` and re-emit the `.html` so its progress reflects reality (regenerate-on-tick; the HTML is static — you rewrite the file).
-9. **Close** — only when the gate is satisfied. Re-emit the HTML with all items checked. Summarize what was mastered and hand off the open gaps to `grill-me` or `brainstorming` for resolution before implementation.
+1. **Scope & map** — read the spec/design/plan in full. Use the Agent tool with `subagent_type=Explore` to walk the code it touches: components involved, where changes land, how they interact with current systems. You cannot walk someone through code you haven't read.
+2. **Build the walkthrough map** — resolve today's date (`date +%F`). Write a comprehension checklist to `docs/raki/learning/<date>-<topic>-spec.md` (one item per dimension above) and the HTML walkthrough map to `docs/raki/learning/<date>-<topic>-spec.html`; open it and share the path. See [HTML-REPORT.md](HTML-REPORT.md). These back the session — do NOT quiz from them yet.
+3. **Walk through the whole design — do NOT quiz** — guide section by section, decision by decision, as the engineer who designed it. For each: the context, the reasoning, the alternatives weighed, the tradeoffs, and the connection to real code. Invite questions and offer ELI5 / ELI14 / ELI-intern depth on request. Show the actual code and use the debugger where it makes a decision concrete. Cover every dimension before any test.
+4. **Confirm the walkthrough is complete** — every dimension covered, every question the developer raised addressed. Only then proceed.
+5. **Switch to VERIFY** — now ask comprehension questions across all dimensions: the problem, the architectural decisions, the tradeoffs, the implementation approach, the operational implications, the risks and limitations. Multiple-choice → `AskUserQuestion`; open-ended ("why this over X?", "how would you extend this?") → plain chat. Tick the checklist as each is confirmed; re-explain any gap, then re-ask. Do not reveal answers before they respond.
+6. **Close** — only when verification confirms ownership-level understanding (can discuss, review, maintain, extend). Re-emit the HTML with all items checked, summarize, and hand any surfaced design gaps to `grill-me` / `brainstorming`.
 
 ## Process Flow
 
@@ -44,61 +44,49 @@ digraph spec_walkthrough {
   rankdir=TB;
   node [shape=box, fontname="monospace"];
 
-  Scope    [label="Scope the spec\n(read in full)"];
-  Map      [label="Map onto codebase\n(Explore subagent)", style=filled, fillcolor="#e0e0ff"];
-  Build    [label="Build checklist doc\n(intent/map/gaps)"];
-  Render   [label="Render HTML learning map\n+ open it", style=filled, fillcolor="#ffe0cc"];
-  Diagnose [label="Diagnose: dev\nrestates understanding", style=filled, fillcolor="#fff2cc"];
-  Teach    [label="Teach ONE stage\n(ELI5/14/intern, show code)", style=filled, fillcolor="#ccffcc"];
-  Verify   [label="Verify via AskUserQuestion\n(quiz, hide answer)", style=filled, fillcolor="#ccccff"];
-  Update   [label="Tick .md +\nre-emit .html", shape=ellipse];
-  Gate     [label="All items checked?", shape=diamond];
-  Close    [label="Re-emit HTML + hand off\nopen gaps to grill/brainstorm"];
+  Scope    [label="Scope & map\n(read spec + Explore code)", style=filled, fillcolor="#e0e0ff"];
+  Map      [label="Build walkthrough map\n(HTML + checklist, no quiz yet)", style=filled, fillcolor="#ffe0cc"];
+  Walk     [label="WALKTHROUGH (full)\nsenior→junior, every dimension", style=filled, fillcolor="#ccffcc"];
+  GateW    [label="Walkthrough complete?", shape=diamond];
+  Verify   [label="VERIFY\ncomprehension checks", style=filled, fillcolor="#ccccff"];
+  GateV    [label="Owns it? (discuss/review/\nmaintain/extend)", shape=diamond];
+  Close    [label="Re-emit HTML + hand off\ndesign gaps"];
 
-  Scope -> Map -> Build -> Render -> Diagnose -> Teach -> Verify -> Update -> Gate;
-  Gate -> Teach   [label="no → next gap", style=dashed];
-  Gate -> Teach   [label="failed quiz → re-teach", style=dashed, color="#cc0000"];
-  Gate -> Close   [label="yes"];
+  Scope -> Map -> Walk -> GateW;
+  GateW -> Walk   [label="no → keep walking", style=dashed];
+  GateW -> Verify [label="yes (only now quiz)"];
+  Verify -> GateV;
+  GateV -> Verify [label="gap → re-explain, re-ask", style=dashed, color="#cc0000"];
+  GateV -> Close  [label="yes"];
 }
 ```
 
-## Quizzing rules
-
-- **Multiple-choice** → `AskUserQuestion`. **Open-ended** ("explain why…", "restate this") → ask directly in chat; `AskUserQuestion` forces a choice and can't capture free reasoning.
-- **Randomize** which option is correct; never let the answer sit in the same slot.
-- **Never reveal the answer before they respond.** Explain only after they answer.
-- A wrong answer is signal, not failure — re-teach that gap a different way, then re-quiz. Do not check the item until correct.
-- Prefer "why" questions over "what" recall — mastery is reasoning, not memorization. For a spec, favor "where would this land in the code" and "what breaks if requirement X is misread."
-
 ## Key Principles
 
-- **Read the code, not just the spec.** A spec is only half the picture; mastery means knowing where it lands. Always do the codebase-mapping pass.
-- **Diagnose before teaching.** Always have them restate first. Teaching into a gap you haven't located wastes both of you.
-- **Incremental, never a final brain-dump.** One stage, one gate, then the next.
-- **Mastery is demonstrated, not asserted.** "Makes sense" is not mastery. A correct restatement or quiz answer is.
-- **Drill the whys.** Each why has a why under it — go down until it bottoms out in a real requirement or constraint.
-- **Make it concrete.** Show the actual code the spec touches, run the debugger, point at the modules. Abstract spec-reading doesn't stick.
-- **Surface gaps, don't silently fill them.** The learner must see the ambiguities and open decisions — hand them off, don't paper over them.
-- **The gate is real.** Do not end early to be polite.
+- **Walk first, test later — never interleave.** The full walkthrough precedes any comprehension check. This is the defining rule that separates this skill from `teach-me`.
+- **Senior-engineer voice.** Every decision is tied back to the problem it solves, the code it touches, and the system it lives in. You are the person who designed it.
+- **Why over what — and why-not.** Don't just describe the design; justify it. Which alternatives were rejected, and why? What assumptions is it betting on? What does each tradeoff buy and cost?
+- **Connect to real code, constantly.** A walkthrough that never opens the codebase is a lecture. Show where it lands, what it changes, what it interacts with.
+- **Cover the whole surface — problem to production.** Motivation, design, end-to-end, codebase fit, risks, operations, maintainer notes. An incomplete walkthrough leaves an incomplete owner.
+- **Aim for ownership, not recall.** Success is the developer reviewing and extending the design as if they built it — not reciting facts.
+- **Verification is comprehensive.** Test across every dimension, especially the hard ones (tradeoffs, operations, risks), not just the easy facts.
 
 ## Red Flags
 
 | Flag | Meaning |
 |------|---------|
-| Teaching the spec without reading the code | Half the picture; the Codebase-map pillar is empty |
-| Explaining everything before any quiz | Violates incremental teaching; nothing is verified |
-| "Does that make sense?" as the check | Self-reported understanding ≠ mastery; quiz instead |
-| Revealing the answer with the question | Destroys the verification signal |
-| Same answer slot every quiz | Learner pattern-matches position, not concept |
-| Advancing with unchecked items | Breaks the HARD-GATE |
-| Quietly resolving an ambiguity | Gaps must be surfaced and handed off, not hidden |
-| Teaching how-to-implement before intent lands | They'll build the wrong thing confidently |
-| HTML drifts from the .md checklist | The two artifacts must agree; re-emit on every tick |
-| Adding JS state/interactivity to the HTML | It's regenerate-on-tick and static; only scripts are the Tailwind + Mermaid CDNs |
+| Quizzing before the walkthrough is complete | This is `teach-me`'s loop, not a walkthrough — defeats the purpose |
+| Walking through the spec without reading the code | Can't explain codebase fit you never looked at |
+| Listing what changes without why | The developer learns the diff, not the design |
+| Skipping alternatives and tradeoffs | "Why this and not that" is the core of senior understanding |
+| Ending at recall | Goal is discuss/review/maintain/extend, not facts |
+| No risk / operational / production coverage | An incomplete walkthrough; maintainers need this most |
+| Treating it like `teach-me` | Different job: subject-learning vs. design-ownership |
+| Revealing answers before they respond | Destroys the verification signal |
 
 ## Integration
 
-- **Sibling of `teach-me`** — same loop, but `teach-me` teaches a *completed* change after the fact, while `spec-walkthrough` teaches a spec *before* implementation, mapped onto the code it will touch.
-- **Complements `reviewing-specs`** — `reviewing-specs` attacks and validates a spec (go/no-go); `spec-walkthrough` transfers understanding of it to the developer. Run the review to decide *whether* to build; run the walkthrough to make sure *whoever builds it* understands it.
-- **Used BEFORE** `writing-plans` / implementation. Hands surfaced gaps off to `grill-me` or `brainstorming` for resolution.
-- **Output destination:** the checklist persists at `docs/raki/learning/<date>-<topic>-spec.md` and its visual companion at `docs/raki/learning/<date>-<topic>-spec.html` — a durable, resumable record. The HTML scaffold and diagram patterns live in [HTML-REPORT.md](HTML-REPORT.md).
+- **Sibling of `teach-me`, different job.** `teach-me` teaches a *subject* incrementally with interleaved quizzes. `spec-walkthrough` is a senior→junior walkthrough of a *specific design* — full walkthrough first, comprehension checks after.
+- **Complements `reviewing-specs` / `reviewing-code`.** The reviews judge whether the design/code is *good* (go/no-go); the walkthrough transfers *ownership* of it. Run a review to decide whether to build; run a walkthrough so whoever builds, reviews, or maintains it understands it deeply.
+- **Used BEFORE** building, reviewing, or taking over a design you'll own. Surfaced design gaps hand off to `grill-me` / `brainstorming`.
+- **Output destination:** the comprehension checklist at `docs/raki/learning/<date>-<topic>-spec.md` and the walkthrough map at `docs/raki/learning/<date>-<topic>-spec.html` — a durable, resumable record. The HTML scaffold and diagram patterns live in [HTML-REPORT.md](HTML-REPORT.md).
