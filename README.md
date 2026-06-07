@@ -2,7 +2,7 @@
 
 A steel-man review framework for agentic software development. Two skills that destroy specs and plans to find their weaknesses, steelman them to find their strengths, then deliver structured go/no-go verdicts.
 
-Built for coding agents (Kimi CLI, Claude Code, Codex, Cursor) that use skills-based workflows like [Superpowers](https://github.com/obra/superpowers).
+Built for coding agents (Kimi CLI, Claude Code, Codex, Cursor) that use skills-based workflows.
 
 ## The Skills
 
