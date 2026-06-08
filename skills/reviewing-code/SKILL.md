@@ -47,9 +47,10 @@ Correctness-only (drop `cleanup-reviewer`) or cleanup-only (run `cleanup-reviewe
 2. **Phase 1 — Find (ATTACK)** — dispatch the finder agents for the chosen effort (`correctness-reviewer`, `integration-reviewer`, `cleanup-reviewer`) via the Agent tool **in a single message** so they run concurrently. Pass each the diff and its candidate cap N. Each returns up to N candidates in `{file, line, summary, failure_scenario}` shape. Do NOT let one agent suppress another.
 3. **Phase 2 — Verify (STEELMAN)** — dedup candidates pointing at the same line/mechanism. Dispatch `finding-verifier` once per remaining candidate (concurrently): it returns **CONFIRMED / PLAUSIBLE / REFUTED** (PLAUSIBLE by default). Keep CONFIRMED + PLAUSIBLE; drop REFUTED.
 4. **Phase 3 — Sweep** (high effort) — dispatch one fresh `correctness-reviewer` given the verified list, hunting ONLY for gaps the first pass missed. No padding; empty sweep is fine.
-5. **Phase 4 — Verdict** — rank correctness above cleanup, most-severe first, to the cap. Write the review to `docs/raki/reviews/<date>-<topic>-code-review.md` (resolve `<date>` with `date +%F`). Deliver **GO / GO-WITH-FIXES / NO-GO**.
-6. **Report** — summarize the verdict and top findings to the user. Do not bury a NO-GO in prose.
-7. **(Optional) Apply cleanup fixes** — only if asked. Fix cleanup findings directly; skip any whose fix would change behavior, reach well outside the diff, or that you judge a false positive — note the skip rather than arguing with it. Never auto-apply correctness fixes; surface those for the author.
+5. **Phase 4 — Verdict** — rank correctness above cleanup, most-severe first, to the cap. Deliver the verdict **directly in the chat** (no file is written): one of **GO / GO-WITH-FIXES / NO-GO**.
+6. **Report** — in the chat, list **every** finding: number them, each with severity (correctness vs cleanup), `file:line`, the named failure/cost, and the suggested fix. Lead with the verdict; do not bury a NO-GO in prose. Use a compact list or table so the user can scan all problems at once.
+7. **Approval gate** — after the list, present the next-step options and **stop for the user to choose**. Offer: (a) apply the cleanup fixes, (b) walk through specific correctness findings, (c) re-review after the author addresses them, or (d) do nothing. Do not act until the user picks.
+8. **(Optional) Apply cleanup fixes** — only after the user approves at the gate. Fix cleanup findings directly; skip any whose fix would change behavior, reach well outside the diff, or that you judge a false positive — note the skip rather than arguing with it. Never auto-apply correctness fixes; surface those for the author.
 
 ## Process Flow
 
@@ -62,13 +63,14 @@ digraph reviewing_code {
   Find   [label="Phase 1: FIND / ATTACK\n3 finder agents (concurrent)", style=filled, fillcolor="#ffcccc"];
   Verify [label="Phase 2: VERIFY / STEELMAN\nfinding-verifier per candidate", style=filled, fillcolor="#ccffcc"];
   Sweep  [label="Phase 3: SWEEP\ncorrectness-reviewer, gaps only (high)", style=filled, fillcolor="#fff2cc"];
-  Verdict[label="Phase 4: VERDICT\n(rank, write doc, go/no-go)", style=filled, fillcolor="#ccccff"];
-  Report [label="Report to user"];
+  Verdict[label="Phase 4: VERDICT\n(rank, go/no-go)", style=filled, fillcolor="#ccccff"];
+  Report [label="Report in chat\n(list all findings)"];
+  Gate   [label="Approval gate\n(stop, user picks next step)", shape=diamond, style=filled, fillcolor="#ffe0b3"];
   Apply  [label="Apply cleanup fixes", shape=ellipse];
 
-  Diff -> Find -> Verify -> Sweep -> Verdict -> Report;
+  Diff -> Find -> Verify -> Sweep -> Verdict -> Report -> Gate;
   Verify -> Verdict [label="low/medium (no sweep)", style=dashed];
-  Report -> Apply   [label="if asked", style=dashed];
+  Gate -> Apply     [label="if user approves", style=dashed];
 }
 ```
 
@@ -97,7 +99,7 @@ digraph reviewing_code {
 
 ## Safety
 
-Read-only over the diff and codebase; the only writes are the review under `docs/raki/reviews/` and — *only when explicitly asked* — the optional cleanup-fix step. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit. Never auto-apply correctness fixes (the author owns those), and never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files.
+Read-only over the diff and codebase. The review is delivered in the chat — no file is written. The only writes are — *only after the user approves at the gate* — the optional cleanup-fix step. Finder/verifier agents declare `tools: Read, Grep, Glob` and cannot edit. Never auto-apply correctness fixes (the author owns those), and never touch `CLAUDE.md`, `AGENTS.md`, or other tools' memory files.
 
 ## Memory
 
@@ -108,4 +110,4 @@ Read-only over the diff and codebase; the only writes are the review under `docs
 - **Third review skill** alongside `reviewing-specs` (validates the spec) and `reviewing-plans` (validates the plan). This one validates the *code*.
 - **Used AFTER** implementation / `executing-plans`, **BEFORE** merge or opening a PR.
 - **Folds in `/simplify`:** the `cleanup-reviewer` agent runs the same angles (Reuse, Simplification, Efficiency, Altitude); run cleanup-only + the optional apply step for a pure simplify pass.
-- **Output destination:** `docs/raki/reviews/<date>-<topic>-code-review.md`. A NO-GO sends the work back to implementation; GO-WITH-FIXES lists ranked required fixes. The 4 finder/verifier agent definitions live in [`agents/`](agents/).
+- **Output destination:** the chat conversation — every finding is listed inline, then an approval gate offers the next steps. No review file is written. A NO-GO sends the work back to implementation; GO-WITH-FIXES lists ranked required fixes. The 4 finder/verifier agent definitions live in [`agents/`](agents/).
