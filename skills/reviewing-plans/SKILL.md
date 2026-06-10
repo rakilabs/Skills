@@ -1,6 +1,6 @@
 ---
 name: reviewing-plans
-description: "Use when an implementation plan is written and needs a gut-check before execution, when resuming a plan from a prior session, or when the user says 'does this plan look right'. Dispatches up to 5 specialist finder subagents (dependency/ordering, task sizing, test plan, rollback/migration, integration risk) plus an adversarial verifier for a multi-angle execution-readiness review, then delivers a ranked GO / CONDITIONAL GO / NO-GO verdict with concrete fixes."
+description: "(raki) Use when an implementation plan is written and needs a gut-check before execution, when resuming a plan from a prior session, or when the user says 'does this plan look right'. Dispatches up to 5 specialist finder subagents (dependency/ordering, task sizing, test plan, rollback/migration, integration risk) plus an adversarial verifier for a multi-angle execution-readiness review, then delivers a ranked GO / CONDITIONAL GO / NO-GO verdict with concrete fixes."
 ---
 
 # reviewing-plans

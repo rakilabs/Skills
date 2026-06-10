@@ -1,6 +1,6 @@
 ---
 name: reviewing-specs
-description: "Use when a design spec / PRD / design doc is complete and needs validation before implementation planning, or when cross-session spec drift is suspected, or when the user says 'review this spec'. Dispatches up to 6 specialist finder subagents (product, architecture, edge-cases, scope/YAGNI, security/privacy, testability) plus an adversarial verifier for a multi-angle steel-man review, then delivers a ranked GO / CONDITIONAL GO / NO-GO verdict with concrete fixes."
+description: "(raki) Use when a design spec / PRD / design doc is complete and needs validation before implementation planning, or when cross-session spec drift is suspected, or when the user says 'review this spec'. Dispatches up to 6 specialist finder subagents (product, architecture, edge-cases, scope/YAGNI, security/privacy, testability) plus an adversarial verifier for a multi-angle steel-man review, then delivers a ranked GO / CONDITIONAL GO / NO-GO verdict with concrete fixes."
 ---
 
 # reviewing-specs

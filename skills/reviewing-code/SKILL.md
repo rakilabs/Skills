@@ -1,6 +1,6 @@
 ---
 name: reviewing-code
-description: "Use when reviewing a code diff/branch/PR before merge: catch correctness bugs first, then reuse/simplification/efficiency/altitude cleanups. Dispatches 4 custom subagents (3 finders + 1 verifier) for a multi-angle fan-out with adversarial verification. Triggers: 'review this diff/branch/PR', 'review my changes', 'code review before merge', 'is this code correct', or after implementing a feature/bugfix and before opening a PR. Optionally applies the cleanup fixes."
+description: "(raki) Use when reviewing a code diff/branch/PR before merge: catch correctness bugs first, then reuse/simplification/efficiency/altitude cleanups. Dispatches 4 custom subagents (3 finders + 1 verifier) for a multi-angle fan-out with adversarial verification. Triggers: 'review this diff/branch/PR', 'review my changes', 'code review before merge', 'is this code correct', or after implementing a feature/bugfix and before opening a PR. Optionally applies the cleanup fixes."
 ---
 
 # reviewing-code
