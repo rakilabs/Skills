@@ -1,6 +1,6 @@
 ---
 name: teach-me
-description: "Teach the learner a completed change, session, or unfamiliar code until they have demonstrably mastered it. The inverse of grill-me: instead of interviewing the user to extract a plan, it teaches the user until verified understanding. Use when the user says 'teach me', 'help me understand this', 'walk me through what just happened', 'explain this change', 'onboard me to X', or after a session/PR/refactor they want to deeply internalize."
+description: "(raki) Teach the learner a completed change, session, or unfamiliar code until they have demonstrably mastered it. The inverse of grill-me: instead of interviewing the user to extract a plan, it teaches the user until verified understanding. Use when the user says 'teach me', 'help me understand this', 'walk me through what just happened', 'explain this change', 'onboard me to X', or after a session/PR/refactor they want to deeply internalize."
 ---
 
 # teach-me

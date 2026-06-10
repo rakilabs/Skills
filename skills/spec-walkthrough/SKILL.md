@@ -1,6 +1,6 @@
 ---
 name: spec-walkthrough
-description: "Walk a developer through a spec / design doc / architecture proposal / implementation plan as a senior engineer guiding a junior. FIRST a complete step-by-step walkthrough — problem, why it exists, why this solution over alternatives, architectural decisions, tradeoffs, assumptions, end-to-end behavior, codebase fit, risks, and production/operational concerns — THEN comprehension checks. Reads the spec AND the code it touches. Use when the user says 'walk me through this spec/design/plan', 'explain this architecture/proposal', 'help me understand this before I build or review it', or hands over a design doc they need to own. Verification comes only AFTER the full walkthrough — never interleaved."
+description: "(raki) Walk a developer through a spec / design doc / architecture proposal / implementation plan as a senior engineer guiding a junior. FIRST a complete step-by-step walkthrough — problem, why it exists, why this solution over alternatives, architectural decisions, tradeoffs, assumptions, end-to-end behavior, codebase fit, risks, and production/operational concerns — THEN comprehension checks. Reads the spec AND the code it touches. Use when the user says 'walk me through this spec/design/plan', 'explain this architecture/proposal', 'help me understand this before I build or review it', or hands over a design doc they need to own. Verification comes only AFTER the full walkthrough — never interleaved."
 ---
 
 # spec-walkthrough
